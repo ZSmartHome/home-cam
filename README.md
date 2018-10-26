@@ -19,8 +19,9 @@ Image:
  - HIDPI http://192.168.1.88/snap.jpg?JpegCam=[CHANNEL]
  - LowDPI http://192.168.1.88/tmpfs/auto.jpg
 
-Video Streaming:  
-RTSP rtsp://admin:admin@192.168.1.88/11
+Video Streaming RTSP:  
+ - First Channel (High-Res) rtsp://admin:admin@192.168.1.88/11
+ - Second Channel (Low-Res) rtsp://admin:admin@192.168.1.88/12
 
 ONVIF Discovery service:
 http://192.168.1.88:8080/
