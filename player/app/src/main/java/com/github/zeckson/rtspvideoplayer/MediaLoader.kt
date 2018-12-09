@@ -63,7 +63,12 @@ import java.security.InvalidParameterException
  * You should validate that the file plays on your target devices via
  * **adb shell am start -a android.intent.action.VIEW -t video/mpeg -d "file:///VIDEO.MP4"**
  */
+
+@SuppressLint("AuthLeak")
+val RTSP_URI = Uri.parse("rtsp://admin:admin@ipcam/11")
+
 class MediaLoader(private val context: Context) {
+
     // This can be replaced by any media player that renders to a Surface. In a real app, this
     // media player would be separated from the rendering code. It is left in this class for
     // simplicity.
@@ -320,8 +325,6 @@ class MediaLoader(private val context: Context) {
         private const val DEFAULT_SPHERE_ROWS = 12
         private const val DEFAULT_SPHERE_COLUMNS = 24
 
-        @SuppressLint("AuthLeak")
-        private val RTSP_URI = Uri.parse("rtsp://admin:admin@ipcam/12")
         val webCamIntent: Intent
             get() {
                 val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
