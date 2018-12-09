@@ -7,4 +7,5 @@
         permission.
     </string>
     <string name="play_label">Play video</string>
+    <string name="extra">…</string>
 </resources>
