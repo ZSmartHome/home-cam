@@ -1,9 +1,9 @@
 package com.github.zeckson.videoview
 
-import android.support.v7.app.AppCompatActivity
+import android.app.Activity
 import android.os.Bundle
 
-class HomeCamActivity : AppCompatActivity() {
+class HomeCamActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
