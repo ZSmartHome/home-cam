@@ -10,7 +10,6 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import com.github.zeckson.rtspvideoplayer.renderer.Mesh
 import com.google.vr.ndk.base.DaydreamApi
 
@@ -24,6 +23,7 @@ import com.google.vr.ndk.base.DaydreamApi
  * how to load other media using a custom Intent, see [MediaLoader].
  */
 class VideoActivity : Activity() {
+    private val TAG = "VideoActivity"
 
     private var videoView: MonoscopicView? = null
 
@@ -38,8 +38,8 @@ class VideoActivity : Activity() {
         setContentView(R.layout.video_activity)
 
         // Configure the MonoscopicView which will render the video and UI.
-        videoView = findViewById(R.id.video_view) as MonoscopicView
-        val videoUi = findViewById(R.id.video_ui_view) as VideoUiView
+        videoView = findViewById(R.id.video_view)
+        val videoUi = findViewById<VideoUiView>(R.id.video_ui_view)
         videoUi.setVrIconClickListener(
             View.OnClickListener {
                 // Convert the Intent used to launch the 2D Activity into one that can launch the VR
@@ -118,7 +118,7 @@ class VideoActivity : Activity() {
 
     /** Initializes the Activity only if the permission has been granted.  */
     private fun initializeActivity() {
-        val root = findViewById(R.id.activity_root) as ViewGroup
+        val root = findViewById<ViewGroup>(R.id.activity_root)
         for (i in 0 until root.childCount) {
             root.getChildAt(i).visibility = View.VISIBLE
         }
@@ -144,7 +144,7 @@ class VideoActivity : Activity() {
     }
 
     companion object {
-        private val TAG = "VideoActivity"
+
         private val READ_EXTERNAL_STORAGE_PERMISSION_ID = 1
     }
 }

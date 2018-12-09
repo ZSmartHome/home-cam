@@ -36,7 +36,9 @@ class SceneRenderer
 /* package */ internal constructor(
     // These are only valid if createForVR() has been called. In the 2D Activity, these are null
     // since the UI is rendered in the standard Android layout.
-    private val canvasQuad: CanvasQuad?, private val videoUiView: VideoUiView?, private val uiHandler: Handler?,
+    private val canvasQuad: CanvasQuad?,
+    private val videoUiView: VideoUiView?,
+    private val uiHandler: Handler?,
     externalFrameListener: SurfaceTexture.OnFrameAvailableListener?
 ) {
 
@@ -90,9 +92,7 @@ class SceneRenderer
             }
         }
 
-        if (canvasQuad != null) {
-            canvasQuad.glInit()
-        }
+        canvasQuad?.glInit()
         reticle.glInit()
     }
 
@@ -181,7 +181,7 @@ class SceneRenderer
 
         displayMesh!!.glDraw(viewProjectionMatrix, eyeType)
         if (videoUiView != null) {
-            canvasQuad!!.glDraw(viewProjectionMatrix, videoUiView.getAlpha())
+            canvasQuad!!.glDraw(viewProjectionMatrix, videoUiView.alpha)
         }
 
         reticle.glDraw(viewProjectionMatrix, controllerOrientationMatrix)
@@ -192,9 +192,7 @@ class SceneRenderer
         if (displayMesh != null) {
             displayMesh!!.glShutdown()
         }
-        if (canvasQuad != null) {
-            canvasQuad.glShutdown()
-        }
+        canvasQuad?.glShutdown()
         reticle.glShutdown()
     }
 
@@ -242,16 +240,16 @@ class SceneRenderer
             val now = SystemClock.uptimeMillis()
             val down = MotionEvent.obtain(
                 now, now, // Timestamps.
-                MotionEvent.ACTION_DOWN, clickTarget!!.x, clickTarget!!.y, // The important parts.
+                MotionEvent.ACTION_DOWN, clickTarget.x, clickTarget.y, // The important parts.
                 1f, 1f, 0, 1f, 1f, 0, 0
             )  // Unused config data.
             down.source = InputDevice.SOURCE_GAMEPAD
-            videoUiView!!.dispatchTouchEvent(down)
+            videoUiView.dispatchTouchEvent(down)
 
             // Clone the down event but change action.
             val up = MotionEvent.obtain(down)
             up.action = MotionEvent.ACTION_UP
-            videoUiView!!.dispatchTouchEvent(up)
+            videoUiView.dispatchTouchEvent(up)
         }
     }
 
@@ -260,10 +258,10 @@ class SceneRenderer
     fun toggleUi() {
         // This can be trigged via a controller action so switch to main thread to manipulate the View.
         uiHandler!!.post {
-            if (videoUiView!!.getAlpha() === 0f) {
-                videoUiView!!.animate().alpha(1f).start()
+            if (videoUiView!!.alpha == 0f) {
+                videoUiView.animate().alpha(1f).start()
             } else {
-                videoUiView!!.animate().alpha(0f).start()
+                videoUiView.animate().alpha(0f).start()
             }
         }
     }

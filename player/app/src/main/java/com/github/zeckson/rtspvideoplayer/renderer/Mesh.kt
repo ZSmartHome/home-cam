@@ -12,10 +12,9 @@ import java.nio.FloatBuffer
  */
 class Mesh
 /** Used by static constructors.  */
-private constructor(// Vertices for the mesh with 3D position + left 2D texture UV + right 2D texture UV.
-    val vertices: FloatArray
-) {
-    private val vertexBuffer: FloatBuffer
+// Vertices for the mesh with 3D position + left 2D texture UV + right 2D texture UV.
+private constructor(private val vertices: FloatArray) {
+    private val vertexBuffer: FloatBuffer = Utils.createBuffer(vertices)
 
     // Program related GL items. These are only valid if program != 0.
     private var program: Int = 0
@@ -24,10 +23,6 @@ private constructor(// Vertices for the mesh with 3D position + left 2D texture 
     private var texCoordsHandle: Int = 0
     private var textureHandle: Int = 0
     private var textureId: Int = 0
-
-    init {
-        vertexBuffer = Utils.createBuffer(vertices)
-    }
 
     /**
      * Finishes initialization of the GL components.
@@ -110,17 +105,17 @@ private constructor(// Vertices for the mesh with 3D position + left 2D texture 
 
     companion object {
         /** Standard media where a single camera frame takes up the entire media frame.  */
-        val MEDIA_MONOSCOPIC = 0
+        const val MEDIA_MONOSCOPIC = 0
         /**
          * Stereo media where the left & right halves of the frame are rendered for the left & right eyes,
          * respectively. If the stereo media is rendered in a non-VR display, only the left half is used.
          */
-        val MEDIA_STEREO_LEFT_RIGHT = 1
+        const val MEDIA_STEREO_LEFT_RIGHT = 1
         /**
          * Stereo media where the top & bottom halves of the frame are rendered for the left & right eyes,
          * respectively. If the stereo media is rendered in a non-VR display, only the top half is used.
          */
-        val MEDIA_STEREO_TOP_BOTTOM = 2
+        const val MEDIA_STEREO_TOP_BOTTOM = 2
 
         // Basic vertex & fragment shaders to render a mesh with 3D position & 2D texture data.
         private val VERTEX_SHADER_CODE = arrayOf(

@@ -156,19 +156,19 @@ class MediaLoader(private val context: Context) {
                 }
 
                 val type = URLConnection.guessContentTypeFromName(uri.path)
-                if (type == null) {
-                    throw InvalidParameterException("Unknown file type: $uri")
-                } else if (type.startsWith("image")) {
-                    // Decoding a large image can take 100+ ms.
-                    mediaImage = BitmapFactory.decodeFile(uri.path)
-                } else if (type.startsWith("video")) {
-                    val mp = MediaPlayer.create(context, uri)
-                    synchronized(this@MediaLoader) {
-                        // This needs to be synchronized with the methods that could clear mediaPlayer.
-                        mediaPlayer = mp
+                when {
+                    type == null -> throw InvalidParameterException("Unknown file type: $uri")
+                    type.startsWith("image") ->
+                        // Decoding a large image can take 100+ ms.
+                        mediaImage = BitmapFactory.decodeFile(uri.path)
+                    type.startsWith("video") -> {
+                        val mp = MediaPlayer.create(context, uri)
+                        synchronized(this@MediaLoader) {
+                            // This needs to be synchronized with the methods that could clear mediaPlayer.
+                            mediaPlayer = mp
+                        }
                     }
-                } else {
-                    throw InvalidParameterException("Unsupported MIME type: $type")
+                    else -> throw InvalidParameterException("Unsupported MIME type: $type")
                 }
 
             } catch (e: IOException) {
@@ -198,9 +198,7 @@ class MediaLoader(private val context: Context) {
 
         public override fun onPostExecute(result: Void?) {
             // Set or clear the UI's mediaPlayer on the UI thread.
-            if (uiView != null) {
-                uiView.setMediaPlayer(mediaPlayer!!)
-            }
+            uiView?.setMediaPlayer(mediaPlayer!!)
         }
     }
 
@@ -233,43 +231,47 @@ class MediaLoader(private val context: Context) {
 
         // The important methods here are the setSurface & lockCanvas calls. These will have to happen
         // after the GLView is created.
-        if (mediaPlayer != null) {
-            // For videos, attach the displaySurface and mediaPlayer.
-            displaySurface = sceneRenderer!!.createDisplay(
-                mediaPlayer!!.videoWidth, mediaPlayer!!.videoHeight, mesh!!
-            )
-            mediaPlayer!!.setSurface(displaySurface)
-            // Start playback.
-            mediaPlayer!!.isLooping = true
-            mediaPlayer!!.start()
-        } else if (mediaImage != null) {
-            // For images, acquire the displaySurface and draw the bitmap to it. Since our Mesh class uses
-            // an GL_TEXTURE_EXTERNAL_OES texture, it's possible to perform this decoding and rendering of
-            // a bitmap in the background without stalling the GL thread. If the Mesh used a standard
-            // GL_TEXTURE_2D, then it's possible to stall the GL thread for 100+ ms during the
-            // glTexImage2D call when loading 4k x 4k panoramas and copying the bitmap's data.
-            displaySurface = sceneRenderer!!.createDisplay(
-                mediaImage!!.width, mediaImage!!.height, mesh!!
-            )
-            val c = displaySurface!!.lockCanvas(null)
-            c.drawBitmap(mediaImage!!, 0f, 0f, null)
-            displaySurface!!.unlockCanvasAndPost(c)
-        } else {
-            // Handle the error case by creating a placeholder panorama.
-            mesh = Mesh.createUvSphere(
-                SPHERE_RADIUS_METERS, DEFAULT_SPHERE_ROWS, DEFAULT_SPHERE_COLUMNS,
-                DEFAULT_SPHERE_VERTICAL_DEGREES, DEFAULT_SPHERE_HORIZONTAL_DEGREES,
-                Mesh.MEDIA_MONOSCOPIC
-            )
+        when {
+            mediaPlayer != null -> {
+                // For videos, attach the displaySurface and mediaPlayer.
+                displaySurface = sceneRenderer!!.createDisplay(
+                    mediaPlayer!!.videoWidth, mediaPlayer!!.videoHeight, mesh!!
+                )
+                mediaPlayer!!.setSurface(displaySurface)
+                // Start playback.
+                mediaPlayer!!.isLooping = true
+                mediaPlayer!!.start()
+            }
+            mediaImage != null -> {
+                // For images, acquire the displaySurface and draw the bitmap to it. Since our Mesh class uses
+                // an GL_TEXTURE_EXTERNAL_OES texture, it's possible to perform this decoding and rendering of
+                // a bitmap in the background without stalling the GL thread. If the Mesh used a standard
+                // GL_TEXTURE_2D, then it's possible to stall the GL thread for 100+ ms during the
+                // glTexImage2D call when loading 4k x 4k panoramas and copying the bitmap's data.
+                displaySurface = sceneRenderer!!.createDisplay(
+                    mediaImage!!.width, mediaImage!!.height, mesh!!
+                )
+                val c = displaySurface!!.lockCanvas(null)
+                c.drawBitmap(mediaImage!!, 0f, 0f, null)
+                displaySurface!!.unlockCanvasAndPost(c)
+            }
+            else -> {
+                // Handle the error case by creating a placeholder panorama.
+                mesh = Mesh.createUvSphere(
+                    SPHERE_RADIUS_METERS, DEFAULT_SPHERE_ROWS, DEFAULT_SPHERE_COLUMNS,
+                    DEFAULT_SPHERE_VERTICAL_DEGREES, DEFAULT_SPHERE_HORIZONTAL_DEGREES,
+                    Mesh.MEDIA_MONOSCOPIC
+                )
 
-            // 4k x 2k is a good default resolution for monoscopic panoramas.
-            displaySurface = sceneRenderer!!.createDisplay(
-                2 * DEFAULT_SURFACE_HEIGHT_PX, DEFAULT_SURFACE_HEIGHT_PX, mesh!!
-            )
-            // Render placeholder grid and error text.
-            val c = displaySurface!!.lockCanvas(null)
-            renderEquirectangularGrid(c, errorText)
-            displaySurface!!.unlockCanvasAndPost(c)
+                // 4k x 2k is a good default resolution for monoscopic panoramas.
+                displaySurface = sceneRenderer!!.createDisplay(
+                    2 * DEFAULT_SURFACE_HEIGHT_PX, DEFAULT_SURFACE_HEIGHT_PX, mesh!!
+                )
+                // Render placeholder grid and error text.
+                val c = displaySurface!!.lockCanvas(null)
+                renderEquirectangularGrid(c, errorText)
+                displaySurface!!.unlockCanvasAndPost(c)
+            }
         }
     }
 
@@ -302,21 +304,21 @@ class MediaLoader(private val context: Context) {
     }
 
     companion object {
-        private val TAG = "MediaLoader"
+        private const val TAG = "MediaLoader"
 
-        val MEDIA_FORMAT_KEY = "stereoFormat"
-        private val DEFAULT_SURFACE_HEIGHT_PX = 2048
+        const val MEDIA_FORMAT_KEY = "stereoFormat"
+        private const val DEFAULT_SURFACE_HEIGHT_PX = 2048
 
         /** A spherical mesh for video should be large enough that there are no stereo artifacts.  */
-        private val SPHERE_RADIUS_METERS = 50f
+        private const val SPHERE_RADIUS_METERS = 50f
 
         /** These should be configured based on the video type. But this sample assumes 360 video.  */
-        private val DEFAULT_SPHERE_VERTICAL_DEGREES = 180f
-        private val DEFAULT_SPHERE_HORIZONTAL_DEGREES = 360f
+        private const val DEFAULT_SPHERE_VERTICAL_DEGREES = 180f
+        private const val DEFAULT_SPHERE_HORIZONTAL_DEGREES = 360f
 
         /** The 360 x 180 sphere has 15 degree quads. Increase these if lines in your video look wavy.  */
-        private val DEFAULT_SPHERE_ROWS = 12
-        private val DEFAULT_SPHERE_COLUMNS = 24
+        private const val DEFAULT_SPHERE_ROWS = 12
+        private const val DEFAULT_SPHERE_COLUMNS = 24
 
         @SuppressLint("AuthLeak")
         private val RTSP_URI = Uri.parse("rtsp://admin:admin@ipcam/12")

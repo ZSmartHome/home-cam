@@ -158,13 +158,13 @@ class CanvasQuad
     companion object {
         // The size of the quad is hardcoded for this sample and the quad doesn't have a model matrix so
         // these dimensions are used by translateClick() for touch interaction.
-        private val WIDTH = 1f
-        private val HEIGHT = 1 / 8f
-        private val DISTANCE = 1f
+        private const val WIDTH = 1f
+        private const val HEIGHT = 1 / 8f
+        private const val DISTANCE = 1f
         // The number of pixels in this quad affect how Android positions Views in it. VideoUiView in VR
         // will be 1024 x 128 px in size which is similar to its 2D size. For Views that only have VR
         // layouts, using a number that results in ~10-15 px / degree is good.
-        val PX_PER_UNIT = 1024
+        const val PX_PER_UNIT = 1024
 
         // Standard vertex shader that passes through the texture data.
         private val vertexShaderCode = arrayOf(
@@ -196,10 +196,10 @@ class CanvasQuad
 
         // The quad has 2 triangles built from 4 total vertices. Each vertex has 3 position & 2 texture
         // coordinates.
-        private val POSITION_COORDS_PER_VERTEX = 3
-        private val TEXTURE_COORDS_PER_VERTEX = 2
-        private val COORDS_PER_VERTEX = POSITION_COORDS_PER_VERTEX + TEXTURE_COORDS_PER_VERTEX
-        private val BYTES_PER_COORD = 4  // float.
+        private const val POSITION_COORDS_PER_VERTEX = 3
+        private const val TEXTURE_COORDS_PER_VERTEX = 2
+        private const val COORDS_PER_VERTEX = POSITION_COORDS_PER_VERTEX + TEXTURE_COORDS_PER_VERTEX
+        private const val BYTES_PER_COORD = 4  // float.
         private val VERTEX_STRIDE_BYTES = COORDS_PER_VERTEX * BYTES_PER_COORD
 
         // Interlaced position & texture data.
