@@ -15,7 +15,7 @@
     android:text="@string/permission_warning"/>
 
   <!-- These views are hidden unless the permission is granted. -->
-  <com.google.vr.sdk.samples.video360.MonoscopicView
+  <com.github.zeckson.rtspvideoplayer.MonoscopicView
     android:id="@+id/video_view"
     android:layout_width="match_parent"
     android:layout_height="0dp"
