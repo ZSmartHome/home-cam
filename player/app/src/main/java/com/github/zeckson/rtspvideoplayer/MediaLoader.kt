@@ -196,7 +196,7 @@ class MediaLoader(private val context: Context) {
 
         }
 
-        public override fun onPostExecute(unused: Void) {
+        public override fun onPostExecute(result: Void?) {
             // Set or clear the UI's mediaPlayer on the UI thread.
             if (uiView != null) {
                 uiView.setMediaPlayer(mediaPlayer!!)
