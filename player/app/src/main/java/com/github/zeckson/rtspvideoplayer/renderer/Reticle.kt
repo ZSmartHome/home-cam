@@ -84,11 +84,15 @@ internal class Reticle {
 
         // Standard vertex shader.
         private val vertexShaderCode = arrayOf(
-            "uniform mat4 uMvpMatrix;", "attribute vec3 aPosition;", "varying vec2 vCoords;",
+            "uniform mat4 uMvpMatrix;",
+            "attribute vec3 aPosition;",
+            "varying vec2 vCoords;",
 
             // Passthrough normalized vertex coordinates.
-            "void main() {", "  gl_Position = uMvpMatrix * vec4(aPosition, 1);",
-            "  vCoords = aPosition.xy / vec2($SIZE, $SIZE);", "}"
+            "void main() {",
+            "  gl_Position = uMvpMatrix * vec4(aPosition, 1);",
+            "  vCoords = aPosition.xy / vec2($SIZE, $SIZE);",
+            "}"
         )
 
         // Procedurally render a ring on the quad between the specified radii.
