@@ -11,16 +11,14 @@ import android.widget.VideoView
 class HomeCamActivity : Activity() {
 
     @SuppressLint("AuthLeak")
+    private val uri = Uri.parse("rtsp://admin:admin@ipcam/12")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home_cam)
         val vidView = findViewById<View>(R.id.myVideo) as VideoView
 
-        val vidAddress =
-            "rtsp://admin:admin@ipcam/12"
-        val vidUri = Uri.parse(vidAddress)
-
-        vidView.setVideoURI(vidUri)
+        vidView.setVideoURI(uri)
         vidView.start()
     }
 }
