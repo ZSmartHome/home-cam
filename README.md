@@ -27,3 +27,7 @@ Login/password: admin/admin
 
 ONVIF Discovery service:
 http://192.168.1.88:8080/
+
+### Links:
+
+[ffmpeg streaming](https://trac.ffmpeg.org/wiki/StreamingGuide)
