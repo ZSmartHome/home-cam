@@ -1,4 +1,6 @@
 # Ignore .idea project files
 .idea
 
+node_modules
 
+data
