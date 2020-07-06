@@ -28,6 +28,11 @@ Login/password: admin/admin
 ONVIF Discovery service:
 http://192.168.1.88:8080/
 
+#### Casting with FFmpeg
+```shell script
+ffmpeg -c copy -acodec ac3 -map 0 -f ismv -movflags delay_moov -hide_banner -loglevel verbose -listen 1 http://0.0.0.0:8080 -i rtsp://admin:admin@zcamera/11
+```
+
 ### Links:
 
 [ffmpeg streaming](https://trac.ffmpeg.org/wiki/StreamingGuide)
